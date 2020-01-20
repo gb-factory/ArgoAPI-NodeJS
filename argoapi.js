@@ -6,7 +6,9 @@ $.ajaxSettings.xhr = function () {
 }
 const ARGOAPI_URL = "https://www.portaleargo.it/famiglia/api/rest/"
 const ARGOAPI_KEY = "ax6542sdru3217t4eesd9"
-const ARGOAPI_VERSION = "2.0.2"
+const ARGOAPI_VERSION = "2.1.0"
+const ARGOAPI_COMPANY = "ARGO Software s.r.l. - Ragusa"
+const ARGOAPI_CODE = "APF";
 class ArgoAPI {
     /**
      * Istanza l'oggetto
@@ -56,7 +58,7 @@ class ArgoAPI {
      * @returns {Promise<{}>} Promessa che restituisce il risultato della richiesta
      */
     async _curl(request, auxiliaryHeader, auxiliaryQuery = {}) {
-            let defaultHeader = { "x-key-app": ARGOAPI_KEY, "x-version": ARGOAPI_VERSION, "user-agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36" };
+            let defaultHeader = { "x-key-app": ARGOAPI_KEY, "x-version": ARGOAPI_VERSION, "x-produttore-software": ARGOAPI_COMPANY, "x-app-code": ARGOAPI_CODE, "user-agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36" };
             let header = { ...defaultHeader, ...auxiliaryHeader };
             let query = { '_dc': Date.now(), ...auxiliaryQuery }
             return $.ajax({
