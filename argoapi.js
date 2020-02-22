@@ -82,7 +82,7 @@ class ArgoAPI {
         let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
         let query = { datGiorno: datGiorno };
         try {
-            return await this.curl('oggi', header, query)
+            return await this._curl('oggi', header, query)
         } catch (ex) {
             throw "Unable to get data"
         }
