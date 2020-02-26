@@ -9,13 +9,14 @@ const ARGOAPI_KEY = "ax6542sdru3217t4eesd9"
 const ARGOAPI_VERSION = "2.1.0"
 const ARGOAPI_COMPANY = "ARGO Software s.r.l. - Ragusa"
 const ARGOAPI_CODE = "APF";
+
 class ArgoAPI {
+
     /**
      * Istanza l'oggetto
      */
-    constructor() {
+    constructor() { }
 
-    }
     /**
      * Metodo per effettuare il login
      * @param {string} cod_min Codice della scuola
@@ -50,6 +51,7 @@ class ArgoAPI {
                                 
             }
     }
+
     /**
      * Metodo utilizzato per effettuarele richieste http al server rest d Argo
      * @param {string} request Tipo di richiesta
@@ -61,6 +63,7 @@ class ArgoAPI {
             let defaultHeader = { "x-key-app": ARGOAPI_KEY, "x-version": ARGOAPI_VERSION, "x-produttore-software": ARGOAPI_COMPANY, "x-app-code": ARGOAPI_CODE, "user-agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36" };
             let header = { ...defaultHeader, ...auxiliaryHeader };
             let query = { '_dc': Date.now(), ...auxiliaryQuery }
+			
             return $.ajax({
                 url: ARGOAPI_URL + request + '?' + $.param(query),
                 beforeSend: function (xhr) {
@@ -73,21 +76,8 @@ class ArgoAPI {
                 error: () => Promise.reject()
             })
     }
-    /**
-     * Metodo utilizzato per prendere la scheda "Accade oggi" in base alla data selezionata
-     * @param {String} datGiorno Formato 'AAAA-MM-GG'
-     * @returns {*} scheda del giorno sotto forma di oggetto
-     */
-    async oggiScuola(datGiorno) {
-        let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
-        let query = { datGiorno: datGiorno };
-        try {
-            return await this._curl('oggi', header, query)
-        } catch (ex) {
-            throw "Unable to get data"
-        }
-    }
-    /**
+	
+	 /**
      * @returns {boolean} Indica se si è loggati o meno
      */
     async isLogged() {
@@ -101,44 +91,65 @@ class ArgoAPI {
         return false
 
     }
+
+    /**
+     * Metodo utilizzato per prendere la scheda "Accade oggi" in base alla data selezionata
+     * @param {String} datGiorno Formato 'AAAA-MM-GG'
+     * @returns {*} scheda del giorno sotto forma di oggetto
+     */
+    async oggiScuola(datGiorno) {
+        let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
+        let query = { datGiorno: datGiorno };
+        try {
+            return await this._curl('oggi', header, query)
+        } catch (ex) {
+            throw 'Unable to get data'
+        }
+    }
+
     /**
      * @returns {*} Ritorna un oggetto contenente le assenze e i ritardi, se ci sono errori lancia un'eccezione
      */
     async assenze(){
         let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
         try {
-            return await this._curl('assenze',header)
-        } catch (ex) {throw 'Unable to get data'}
+            return await this._curl('assenze', header)
+        } catch (ex) {
+            throw 'Unable to get data'
+        }
     }
+	
+	/**
+     * @returns {*} Ritorna un oggetto contenente i voti giornalieri, se ci sono errori lancia un errore
+     */
+    async votiGiornalieri(){
+        let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
+        try{
+            return await this._curl("votigiornalieri", header)
+        } catch(ex){
+            throw 'Unable to get data'
+        }
+    }
+	
     /**
      * @returns {*} Ritorna un oggetto contenente le note disciplinari, se ci sono errori lancia un errore
      */
     async noteDisciplinari(){
         let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
         try {
-            return await this._curl('notedisciplinari',header)
+            return await this._curl('notedisciplinari', header)
         } catch(ex){
             throw 'Unable to get data'
         }
     }
-    /**
-     * @returns {*} Ritorna un oggetto contenente i voti giornalieri, se ci sono errori lancia un errore
-     */
-    async votiGiornalieri(){
-        let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
-        try{
-            return await this._curl("votigiornalieri",header)
-        } catch(ex){
-            throw 'Unable to get data'
-        }
-    }
+
     /**
      * @returns {*} Ritorna un oggetto contenente i voti degli scrutini, se ci sono errori lancia un errore
      */
     async votiScrutinio(){
         let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
         try{
-            return await this._curl('votiscrutinio',header)
+            return await this._curl('votiscrutinio', header)
         }catch(ex){
             throw 'Unable to get data'
         }
@@ -149,55 +160,86 @@ class ArgoAPI {
     async compiti(){
         let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
         try{
-            return await this._curl("compiti",header)
+            return await this._curl("compiti", header)
         }catch(ex) {
             throw 'Unable to get data'
         }
     }
+	
     /**
      * @returns {*} Ritorna un oggetto contenente gli argomenti, se ci sono errori lancia un errore
      */
     async argomenti(){
         let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
         try{
-            return await this._curl("argomenti",header)
+            return await this._curl("argomenti", header)
         }catch(ex) {
             throw 'Unable to get data'
         }
     }
+	
     /**
      * @returns {*} Ritorna un oggetto contenente i promemoria, se ci sono errori lancia un errore
      */
     async promemoria(){
         let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
         try{
-            return await this._curl("promemoria",header)
+            return await this._curl("promemoria", header)
         }catch(ex) {
             throw 'Unable to get data'
         }
     }
+	
     /**
      * @returns {*} Ritorna un oggetto contenente l'orario, se ci sono errori lancia un errore
      */
     async orario(){
         let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
         try{
-            return await this._curl("orario",header)
+            return await this._curl("orario", header)
         }catch(ex) {
             throw 'Unable to get data'
         }
     }
+    
     /**
-     * @returns {*} Ritorna un oggetto contenente i docenti, se ci sono errori lancia un errore
+     * @returns {*} Ritorna un oggetto contenente i docenti della classe, se ci sono errori lancia un errore
      */
     async docenti(){
         let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
         try{
-            return await this._curl("docenti",header)
+            return await this._curl("docenticlasse", header)
         }catch(ex) {
             throw 'Unable to get data'
         }
     }
+    
+	/**
+	 * Bacheca
+	 */
+	async bacheca(){
+        let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
+        let query = { datInizio: "2019-09-01", datFine: "2020-08-31" };
+        try{
+            return await this._curl("bacheca", header, query);
+        }catch(ex) {
+            throw ex
+        }
+    }
+
+        
+    /**
+     * @returns {*} Ritorna un oggett contentente i dati anagrafici dello studente, se ci sono errori lancia un errore.
+     */
+    async datiAnagrafici(){
+        let header = { "x-auth-token": this.scheda.authToken, "x-cod-min": this.scheda.codMin, "x-prg-alunno": this.scheda.prgAlunno, "x-prg-scheda": this.scheda.prgScheda, "x-prg-scuola": this.scheda.prgScuola };
+        try {
+            return await this._curl('schede',header)
+        } catch (ex) {
+            throw 'Unable to get data'
+        }
+    }
+	
 }
 
 
